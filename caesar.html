@@ -3,7 +3,73 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Caesar Cipher — Crypto Visualizer</title>
+  <title>Caesar Cipher — Crypto Visu<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crypto Visualizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1><a href="index.html">Home</a></h1>
+    <header>
+      <h1>Crypto Visualizer — Caesar Cipher</h1>
+    </header>
+    <p class="lead">Interactive Caesar cipher demo. Type text and choose a shift.</p>
+
+    <div class="panel">
+      <label for="inputText">Plaintext / Ciphertext</label>
+      <textarea id="inputText" placeholder="Type or paste text here...">Hello, CryptoPlayground!</textarea>
+
+      <div class="controls">
+        <div>
+          <label for="shiftRange">Shift: <span id="shiftValue">3</span></label>
+          <input id="shiftRange" type="range" min="0" max="25" value="3" />
+        </div>
+
+        <div>
+          <label for="mode">Mode</label>
+          <div class="row">
+            <select id="mode">
+              <option value="enc">Encrypt</option>
+              <option value="dec">Decrypt</option>
+            </select>
+            <button id="visualizeBtn">Visualize</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-bottom">
+        <button id="runBtn" class="primary">Run</button>
+        <button id="copyBtn">Copy Output</button>
+        <button id="clearBtn">Clear</button>
+        <button id="randomBtn">Random Example</button>
+      </div>
+
+      <div class="hint">Non-alphabet characters are preserved.</div>
+
+      <h3 style="margin-top:18px">Alphabet Mapping</h3>
+      <div class="alphabet" id="alphabetRow"></div>
+      <div class="map" id="mappedRow"></div>
+
+      <h3 style="margin-top:14px">Output</h3>
+      <div class="output" id="outputArea">(press Run)</div>
+
+      <div style="margin-top:12px">
+        <button id="stepBtn">Step-by-step</button>
+        <button id="stopBtn" disabled>Stop</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="caesar.js"></script>
+</body>
+</html>
+alizer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -54,3 +120,4 @@
   <script src="caesar.js"></script>
 </body>
 </html>
+
