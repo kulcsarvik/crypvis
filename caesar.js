@@ -7,15 +7,10 @@ const outputArea = document.getElementById('outputArea');
 const alphabetRow = document.getElementById('alphabetRow');
 const mappedRow = document.getElementById('mappedRow');
 const runBtn = document.getElementById('runBtn');
-const visualizeBtn = document.getElementById('visualizeBtn');
-const stepBtn = document.getElementById('stepBtn');
-const stopBtn = document.getElementById('stopBtn');
 const copyBtn = document.getElementById('copyBtn');
 const clearBtn = document.getElementById('clearBtn');
 const randomBtn = document.getElementById('randomBtn');
-
-let stepping = false;
-let stepTimer = null;
+const processLog = document.getElementById('processLog');
 
 function buildAlphabet() {
   alphabetRow.innerHTML = '';
@@ -35,21 +30,17 @@ function buildAlphabet() {
 
 function normalizeShift(s) { return ((s % 26) + 26) % 26; }
 
-function applyCaesar(text, shift, modeType='enc'){
+function applyCaesarChar(ch, shift, modeType='enc'){
   shift = normalizeShift(Number(shift));
-  if(modeType === 'dec') shift = 26 - shift;
-  let out = '';
-  for (let ch of text) {
-    const code = ch.charCodeAt(0);
-    if (code >= A_CODE && code < A_CODE + 26) {
-      out += String.fromCharCode(((code - A_CODE + shift) % 26) + A_CODE);
-    } else if (code >= a_CODE && code < a_CODE + 26) {
-      out += String.fromCharCode(((code - a_CODE + shift) % 26) + a_CODE);
-    } else {
-      out += ch;
-    }
+  if (modeType === 'dec') shift = 26 - shift;
+  const code = ch.charCodeAt(0);
+  if (code >= A_CODE && code < A_CODE + 26) {
+    return String.fromCharCode(((code - A_CODE + shift) % 26) + A_CODE);
+  } else if (code >= a_CODE && code < a_CODE + 26) {
+    return String.fromCharCode(((code - a_CODE + shift) % 26) + a_CODE);
+  } else {
+    return ch;
   }
-  return out;
 }
 
 function updateMapping(shift){
@@ -64,66 +55,56 @@ function updateMapping(shift){
 function run() {
   const text = inputText.value;
   const s = Number(shiftRange.value);
-  const out = applyCaesar(text, s, mode.value);
-  outputArea.textContent = out;
-  updateMapping(s);
-}
-
-function playSteps() {
-  if (stepping) return;
-  stepping = true;
-  stepBtn.disabled = true;
-  stopBtn.disabled = false;
-
-  const text = inputText.value;
-  const s = Number(shiftRange.value);
   const modeType = mode.value;
-  let idx = 0;
-  outputArea.textContent = '';
 
-  updateMapping(s);
+  let out = '';
+  const lines = [];
 
-  function doStep(){
-    if (!stepping || idx >= text.length) { stopSteps(); return; }
-    const ch = text[idx];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     const code = ch.charCodeAt(0);
-    Array.from(mappedRow.children).forEach(c => c.classList.remove('cursor','highlight'));
 
     if (code >= A_CODE && code < A_CODE + 26) {
       const pos = code - A_CODE;
-      const mappedIndex = (pos + (modeType==='dec' ? 26 - Number(s) : Number(s))) % 26;
-      mappedRow.children[mappedIndex].classList.add('highlight','cursor');
+      const usedShift = modeType === 'dec' ? (26 - normalizeShift(s)) : normalizeShift(s);
+      const mappedIndex = (pos + usedShift) % 26;
+      const mappedChar = String.fromCharCode(A_CODE + mappedIndex);
+      out += mappedChar;
     } else if (code >= a_CODE && code < a_CODE + 26) {
       const pos = code - a_CODE;
-      const mappedIndex = (pos + (modeType==='dec' ? 26 - Number(s) : Number(s))) % 26;
-      mappedRow.children[mappedIndex].classList.add('highlight','cursor');
+      const usedShift = modeType === 'dec' ? (26 - normalizeShift(s)) : normalizeShift(s);
+      const mappedIndex = (pos + usedShift) % 26;
+      const mappedChar = String.fromCharCode(a_CODE + mappedIndex);
+      out += mappedChar;
+    } else {
+      out += ch;
     }
-
-    const transformed = applyCaesar(ch, s, modeType);
-    outputArea.textContent += transformed;
-
-    idx++;
-    stepTimer = setTimeout(doStep, 220);
   }
 
-  doStep();
+  outputArea.textContent = out || '(empty)';
+  processLog.textContent = lines.join('\n');
+  updateMapping(s);
 }
 
-function stopSteps(){
-  stepping = false;
-  stepBtn.disabled = false;
-  stopBtn.disabled = true;
-  clearTimeout(stepTimer);
-  Array.from(mappedRow.children).forEach(c => c.classList.remove('cursor'));
-}
+shiftRange.addEventListener('input', ()=>{
+  shiftValue.textContent = shiftRange.value;
+  updateMapping(shiftRange.value);
+});
 
-shiftRange.addEventListener('input', ()=>{ shiftValue.textContent = shiftRange.value; updateMapping(shiftRange.value); });
 runBtn.addEventListener('click', run);
-visualizeBtn.addEventListener('click', ()=>{ updateMapping(Number(shiftRange.value)); });
-stepBtn.addEventListener('click', playSteps);
-stopBtn.addEventListener('click', stopSteps);
-copyBtn.addEventListener('click', ()=>{ navigator.clipboard.writeText(outputArea.textContent); copyBtn.textContent='Copied!'; setTimeout(()=>copyBtn.textContent='Copy Output',900); });
-clearBtn.addEventListener('click', ()=>{ inputText.value=''; outputArea.textContent=''; });
+
+copyBtn.addEventListener('click', ()=>{
+  navigator.clipboard.writeText(outputArea.textContent);
+  copyBtn.textContent='Copied!';
+  setTimeout(()=>copyBtn.textContent='Copy Output',900);
+});
+
+clearBtn.addEventListener('click', ()=>{
+  inputText.value='';
+  outputArea.textContent='';
+  processLog.textContent='(press Run)';
+});
+
 randomBtn.addEventListener('click', ()=>{ inputText.value = sample(); });
 
 function sample(){
@@ -140,4 +121,6 @@ buildAlphabet();
 updateMapping(Number(shiftRange.value));
 shiftValue.textContent = shiftRange.value;
 
-window.addEventListener('keydown', (e)=>{ if (e.ctrlKey && e.key === 'Enter') run(); });
+window.addEventListener('keydown', (e)=>{
+  if (e.ctrlKey && e.key === 'Enter') run();
+});
