@@ -94,7 +94,6 @@ function updateMapping(a, b, mode) {
   }
 }
 
-// --- Event handlers ---
 runBtn.addEventListener("click", () => {
   const text = inputText.value;
   const a = parseInt(aValue.value);
@@ -136,3 +135,4 @@ randomBtn.addEventListener("click", () => {
 });
 
 updateMapping(5, 8, "enc");
+
