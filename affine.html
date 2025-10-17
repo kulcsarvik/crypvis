@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Crypto Visualizer — Affine Cipher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1><a href="index.html">Home</a></h1>
+    <header>
+      <h1>Crypto Visualizer — Affine Cipher</h1>
+    </header>
+    <p class="lead">Interactive Affine cipher demo. Type text and choose keys <code>a</code> and <code>b</code>.</p>
+
+    <div class="panel">
+      <label for="inputText">Plaintext / Ciphertext</label>
+      <textarea id="inputText" placeholder="Type or paste text here...">Hello!</textarea>
+
+      <div class="controls">
+        <div>
+          <label for="aValue">Key a (invertible mod 26):</label>
+          <select id="aValue">
+            <option>1</option><option>3</option><option>5</option><option>7</option>
+            <option>9</option><option>11</option><option>15</option><option>17</option>
+            <option>19</option><option>21</option><option>23</option><option>25</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="bValue">Key b:</label>
+          <input id="bValue" type="number" min="0" max="25" value="8" />
+        </div>
+
+        <div>
+          <label for="mode">Mode:</label>
+          <select id="mode">
+            <option value="enc">Encrypt</option>
+            <option value="dec">Decrypt</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls-bottom">
+        <button id="runBtn" class="primary">Run</button>
+        <button id="copyBtn">Copy Output</button>
+        <button id="clearBtn">Clear</button>
+        <button id="randomBtn">Random Example</button>
+      </div>
+
+      <div class="hint">Only uppercase A–Z are transformed. Non-alphabet characters are preserved.</div>
+
+      <h3 style="margin-top:18px">Alphabet Mapping</h3>
+      <div class="alphabet" id="alphabetRow"></div>
+      <div class="map" id="mappedRow"></div>
+
+      <h3 style="margin-top:14px">Output</h3>
+      <div class="output" id="outputArea">(press Run)</div>
+
+      <h3 style="margin-top:14px">Step Details</h3>
+      <div class="details" id="detailsArea">(none yet)</div>
+    </div>
+  </div>
+
+  <script src="affine.js"></script>
+</body>
+</html>
